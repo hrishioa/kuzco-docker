@@ -1,0 +1,25 @@
+# Use an official Ubuntu base image
+#FROM nvidia/cuda:12.3.2-runtime-ubuntu22.04
+# FROM nvidia/cuda:11.6.1-runtime-ubuntu20.04
+FROM ollama/ollama
+
+# Avoid prompts from apt
+ENV DEBIAN_FRONTEND=noninteractive
+
+# Install curl
+RUN apt-get update && apt-get install -y curl lshw unzip
+
+# Run the Kuzco installation command
+RUN curl -fsSL https://kuzco.xyz/install.sh | sh
+
+RUN curl -fsSL https://bun.sh/install | bash 
+
+COPY runner/ ./kuzco_runner
+
+RUN mkdir -p /home/samheutmaker/.kuzco/models/
+
+# (Optional) Define a command for the container to run on startup, such as starting Kuzco
+# CMD ["kuzco", "some", "arguments"]
+CMD ["tail", "-f", "/kuzco_runner/kuzco_runner_logs.txt"]
+#CMD ["tail", "-f", "/dev/null"]
+# CMD ["kuzco", "init"]
